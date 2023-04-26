@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping-Pong - Quem saca?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .card {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 600px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        form {
+            margin-bottom: 1em;
+        }
+
+        #resultado {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function formatarPontuacao() {
+            const pontuacaoInput = document.getElementById("pontuacao");
+            const pontuacao = pontuacaoInput.value.replace(/[^0-9]/g, '');
+            if (pontuacao.length > 2) {
+                pontuacaoInput.value = pontuacao.slice(0, 2) + ':' + pontuacao.slice(2, 4);
+            } else if (pontuacao.length > 1) {
+                pontuacaoInput.value = pontuacao.slice(0, 1) + ':' + pontuacao.slice(1, 3);
+            } else {
+                pontuacaoInput.value = pontuacao;
+            }
+        }
+
+
+        async function verificarSaque() {
+            const pontuacao = document.getElementById("pontuacao").value;
+            const response = await fetch('saque.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'pontuacao=' + encodeURIComponent(pontuacao)
+            });
+            const resultado = await response.text();
+            document.getElementById("resultado").innerText = resultado;
+        }
+    </script>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Ping-Pong: Quem saca?</h1>
+        <form onsubmit="event.preventDefault(); verificarSaque();">
+            <label for="pontuacao">Digite a pontuação atual (exemplo: 3:2):</label>
+            <input type="text" id="pontuacao" required oninput="formatarPontuacao();">
+            <button type="submit">Verificar</button>
+        </form>
+        <p id="resultado"></p>
+    </div>
+</body>
+
+</html>
